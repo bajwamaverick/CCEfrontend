@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { filter } from 'rxjs/operators';
-import { authCodeFlowConfig } from './core/oauth/idm.auth.config';
-import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
-import { useHash } from './app.flags';
+import { Observable } from 'rxjs';
+
+import { AuthService } from './core/oauth/auth.service';
 
 
 @Component({
@@ -13,46 +10,35 @@ import { useHash } from './app.flags';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'CCE Frontend';
+  isAuthenticated: Observable<boolean>;
+  isDoneLoading: Observable<boolean>;
+  canActivateProtectedRoutes: Observable<boolean>;
 
-  constructor(private router: Router, private oauthService: OAuthService) {
+  constructor (
+    private authService: AuthService,
+  ) {
     
-    this.configureCodeFlow();
-    // Automatically load user profile
-    this.oauthService.events
-      .pipe(filter(e => e.type === 'token_received'))
-      .subscribe(_ => this.oauthService.loadUserProfile());
+    this.isAuthenticated = this.authService.isAuthenticated$;
+    this.isDoneLoading = this.authService.isDoneLoading$;
+    this.canActivateProtectedRoutes = this.authService.canActivateProtectedRoutes$;
+
+    this.authService.runInitialLoginSequence();
+    
   }
 
-  private configureCodeFlow() {
-    this.oauthService.configure(authCodeFlowConfig);
-    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(_ => {
-      if (useHash) {
-        this.router.navigate(['/']);
-      }
-    });
+  login() { this.authService.login(); }
+  logout() { this.authService.logout(); }
+  refresh() { this.authService.refresh(); }
+  reload() { window.location.reload(); }
+  clearStorage() { localStorage.clear(); }
 
-    // Optional
-    this.oauthService.setupAutomaticSilentRefresh();
+  logoutExternally() {
+    window.open(this.authService.logoutUrl);
   }
 
-
-
-  get userName(): string {
-    const claims = this.oauthService.getIdentityClaims();
-    if (!claims) return null;
-    return claims['given_name'];
-  }
-
-  get idToken(): string {
-    return this.oauthService.getIdToken();
-  }
-
-  get accessToken(): string {
-    return this.oauthService.getAccessToken();
-  }
-
-  refresh() {
-    this.oauthService.refreshToken();
-  }
+  get hasValidToken() { return this.authService.hasValidToken(); }
+  get accessToken() { return this.authService.accessToken; }
+  get refreshToken() { return this.authService.refreshToken; }
+  get identityClaims() { return this.authService.identityClaims; }
+  get idToken() { return this.authService.idToken; }
 }

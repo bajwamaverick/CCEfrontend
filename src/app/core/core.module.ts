@@ -1,24 +1,42 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
-import {HttpTokenInterceptor} from './interceptors/http.token.interceptor';
-import {LoggerService} from './logger/logger.service';
-import {UserMock} from './mocks/user.mock';
-import {OAuthService} from './oauth/auth.service';
-import {UserService} from './singleton/user.service';
-import {base64UrlEncode} from './utilities/base64-helper';
+import { HttpClientModule } from '@angular/common/http';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { AuthConfig, OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
+import { authConfig } from './oauth/idm.auth.config';
+// import { AuthGuardWithForcedLogin } from './auth-guard-with-forced-login.service';
+import { AuthGuard } from './oauth/auth-guard.service';
+import { authModuleConfig } from './oauth/outh.module.config';
+import { AuthService } from './oauth/auth.service';
 
-import {UrlHelperService} from './utilities/urlhelper.service';
-
+// We need a factory since localStorage is not available at AOT build time
+export function storageFactory(): OAuthStorage {
+  return localStorage;
+}
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent],
   imports: [
-    CommonModule
+    HttpClientModule,
+    OAuthModule.forRoot(),
   ],
-  providers:[UserService,LoggerService,OAuthService,UrlHelperService],
-  exports:[HeaderComponent, FooterComponent]
-  
+  providers: [
+    AuthService,
+    AuthGuard
+  ],
 })
-export class CoreModule { }
+export class CoreModule {
+  static forRoot(): ModuleWithProviders<CoreModule> {
+    return {
+      ngModule: CoreModule,
+      providers: [
+        { provide: AuthConfig, useValue: authConfig },
+        { provide: OAuthModuleConfig, useValue: authModuleConfig },
+        { provide: OAuthStorage, useFactory: storageFactory },
+      ]
+    };
+  }
+
+  constructor (@Optional() @SkipSelf() parentModule: CoreModule) {
+    if (parentModule) {
+      throw new Error('CoreModule is already loaded. Import it in the AppModule only');
+    }
+  }
+}

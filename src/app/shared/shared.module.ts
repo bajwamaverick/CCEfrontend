@@ -4,7 +4,7 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { CollapseButtonComponent } from './components/buttons/collapse-button/collapse-button.component';
 import { AuthDirective } from './directives/auth.directive';
 import { CapitalPipe } from './pipes/capital.pipe';
-import { AuthGuard } from './guard/auth.guard';
+
 
 
 @NgModule({
@@ -18,7 +18,7 @@ import { AuthGuard } from './guard/auth.guard';
 export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {
     return {
-      providers: [AuthGuard],
+      
       ngModule: SharedModule
     };
   }

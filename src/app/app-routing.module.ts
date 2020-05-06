@@ -38,19 +38,19 @@ const routes: Routes = [
     component: SolutionsComponent,
     
   },
-  {
-    path: '**',
-    redirectTo: 'deployment'
-  }
+  // {
+  //   path: '**',
+  //   redirectTo: 'deployment'
+  // }
 ];
-const ROUTING_OPTIONS: ExtraOptions = {
-  // preloadingStrategy: CustomPreloadingStrategy,
-  useHash:useHash,
-  initialNavigation: !useHash
-};
+// const ROUTING_OPTIONS: ExtraOptions = {
+//   // preloadingStrategy: CustomPreloadingStrategy,
+//   useHash:useHash,
+//   initialNavigation: !useHash
+// };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,ROUTING_OPTIONS)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
