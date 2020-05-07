@@ -121,7 +121,7 @@ export class AuthService {
 
             if (result
               && result.reason
-              && errorResponsesRequiringUserInteraction.indexOf(result.reason.error) >= 0) {
+              && errorResponsesRequiringUserInteraction.indexOf(result.reason.params.error) >= 0) {
 
               // 3. ASK FOR LOGIN:
               // At this point we know for sure that we have to ask the
@@ -129,10 +129,10 @@ export class AuthService {
               // enter credentials.
               //
               // Enable this to ALWAYS force a user to login.
-             // this.oauthService.initImplicitFlow();
+             this.oauthService.initImplicitFlow();
               //
               // Instead, we'll now do this:
-             console.warn('User interaction is needed to log in, we will wait for the user to manually log in.');
+            // console.warn('User interaction is needed to log in, we will wait for the user to manually log in.');
               return Promise.resolve();
             }
 
