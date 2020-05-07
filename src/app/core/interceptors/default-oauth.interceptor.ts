@@ -16,12 +16,12 @@ import {
   timeout
 } from 'rxjs/operators';
 import { OAuthResourceServerErrorHandler } from './resource-server-error-handler';
-import { OAuthModuleConfig } from '../oauth-module.config';
-import { OAuthStorage } from '../types';
-import { OAuthService } from '../oauth-service';
+import { OAuthModuleConfig } from '../oauth/outh.module.config';
+import { OAuthStorage } from '../oauth/types';
+import { OAuthService } from '../oauth/auth.service';
 
 @Injectable()
-export class OAuthInterceptor implements HttpInterceptor {
+export class DefaultOAuthInterceptor implements HttpInterceptor {
   constructor(
     private authStorage: OAuthStorage,
     private oAuthService: OAuthService,
