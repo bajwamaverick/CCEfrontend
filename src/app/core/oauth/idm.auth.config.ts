@@ -1,7 +1,7 @@
 import { AuthConfig } from 'angular-oauth2-oidc';
 
 export const authConfig: AuthConfig = {
-  issuer: 'https://idsvr4.azurewebsites.net',
+  issuer: 'https://idm-test-uswest2-idmsts.azurewebsites.net',
   clientId: 'spa', // The "Auth Code + PKCE" client
   responseType: 'code',
   redirectUri: window.location.origin + '/index.html',
