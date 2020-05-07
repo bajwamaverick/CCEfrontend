@@ -2,12 +2,12 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 
 export const authConfig: AuthConfig = {
   issuer: 'https://idm-test-uswest2-idmsts.azurewebsites.net',
-  clientId: 'spa', // The "Auth Code + PKCE" client
+  clientId: 'demo_mvc_client', // The "Auth Code + PKCE" client
   responseType: 'code',
   redirectUri: window.location.origin + '/index.html',
   silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-  scope: 'openid profile email api', // Ask offline_access to support refresh token refreshes
-  useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
+  scope: 'openid profile email idmauthz.access offline_access idmauthz.readorganizationalresources idmauthz.readuserpermissions', // Ask offline_access to support refresh token refreshes
+  useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes 
   silentRefreshTimeout: 5000, // For faster testing
   timeoutFactor: 0.25, // For faster testing
   sessionChecksEnabled: true,
