@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from './core/oauth/auth.service';
+
+import {Event,Router,NavigationStart,NavigationEnd,NavigationCancel,NavigationError } from '@angular/router';
 
 
 @Component({
@@ -13,11 +15,23 @@ export class AppComponent {
   isAuthenticated: Observable<boolean>;
   isDoneLoading: Observable<boolean>;
   canActivateProtectedRoutes: Observable<boolean>;
-
+  showLoadingProperty:boolean = true;
   constructor (
-    private authService: AuthService,
+    private authService: AuthService,private router:Router,private httpclient:HttpClient
   ) {
-    
+    this.router.events.subscribe((routerEvent:Event) =>
+    {
+      if( routerEvent instanceof NavigationStart) {
+      this.showLoadingProperty = true;
+      }
+      if( routerEvent instanceof NavigationEnd ||
+        routerEvent instanceof NavigationCancel ||
+        routerEvent instanceof NavigationError
+         ) {
+        this.showLoadingProperty = false;
+        }
+
+    } );
     this.isAuthenticated = this.authService.isAuthenticated$;
     this.isDoneLoading = this.authService.isDoneLoading$;
     this.canActivateProtectedRoutes = this.authService.canActivateProtectedRoutes$;
@@ -26,19 +40,13 @@ export class AppComponent {
     
   }
 
-  login() { this.authService.login(); }
-  logout() { this.authService.logout(); }
-  refresh() { this.authService.refresh(); }
-  reload() { window.location.reload(); }
-  clearStorage() { localStorage.clear(); }
-
-  logoutExternally() {
-    window.open(this.authService.logoutUrl);
+  throwError(){
+    throw new Error('My Pretty Error');
   }
 
-  get hasValidToken() { return this.authService.hasValidToken(); }
-  get accessToken() { return this.authService.accessToken; }
-  get refreshToken() { return this.authService.refreshToken; }
-  get identityClaims() { return this.authService.identityClaims; }
-  get idToken() { return this.authService.idToken; }
+  throwHttpError(){
+    this.httpclient.get('urlhere').subscribe();
+  }
+
+  
 }

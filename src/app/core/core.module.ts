@@ -7,8 +7,10 @@ import { authConfig } from './oauth/idm.auth.config';
 import { AuthGuard } from './oauth/auth-guard.service';
 import { authModuleConfig } from './oauth/outh.module.config';
 import { AuthService } from './oauth/auth.service';
-import {TokenInterceptor} from './token/token-interceptor.service'
+// import {TokenInterceptor} from './token/token-interceptor.service'
+import {HeaderComponent} from './header/header.component'
 // We need a factory since localStorage is not available at AOT build time
+// // // { provide: HTTP_INTERCEPTORS, useClass:TokenInterceptor, multi:true}
 export function storageFactory(): OAuthStorage {
   return localStorage;
 }
@@ -18,6 +20,8 @@ export function storageFactory(): OAuthStorage {
     HttpClientModule,
     OAuthModule.forRoot(),
   ],
+  declarations : [HeaderComponent ],
+  exports : [HeaderComponent ],
   providers: [
     AuthService,
     AuthGuard
@@ -30,9 +34,8 @@ export class CoreModule {
       providers: [
         { provide: AuthConfig, useValue: authConfig },
         { provide: OAuthModuleConfig, useValue: authModuleConfig },
-        { provide: OAuthStorage, useFactory: storageFactory },
-        { provide: HTTP_INTERCEPTORS, useClass:TokenInterceptor, multi:true}
-      ]
+        { provide: OAuthStorage, useFactory: storageFactory }
+       ]
     };
   }
 
